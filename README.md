@@ -1,4 +1,4 @@
-# Quality-Control-Chart-Automation_for-Hospitals-Across-USA
+# Quality-Control-Chart-Automation-for-Hospitals-Across-USA
 Process Automation for plotting Control Charts for chosen measures and list of Hospitals after web scrapping the data from CMS Website
 
 # Problem Statement:
