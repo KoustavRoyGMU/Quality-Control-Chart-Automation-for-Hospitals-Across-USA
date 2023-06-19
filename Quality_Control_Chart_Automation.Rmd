@@ -1,0 +1,241 @@
+---
+title: "HAP 725 Case Study"
+author: "Koustav Roy"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Loading the Library
+
+```{r loading_libraries, warning=FALSE}
+
+library(dplyr)
+library(ggplot2)
+
+```
+
+# Declaring Variables
+
+```{r declaring_variables}
+
+V_Provider_ID_Hospital_to_Analyze <- 10001
+V_Provider_ID_Comp1 <- 360180
+V_Provider_ID_Comp2 <- 50510
+V_Provider_ID_Comp3 <- 0
+
+V_Attribute1 <- "H_COMP_1_A_P"
+V_Attribute2 <- "H_COMP_7_LINEAR_SCORE"
+V_Attribute3 <- "H_RECMND_PY"
+V_Attribute4 <- "H_COMP_2_U_P"
+V_Attribute5 <- ""
+
+V_Analysis_starting_Year <- 2014
+
+
+
+```
+
+# Importing The Dataset
+
+```{r importing_data}
+
+#Reading 2015 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2015/hos_revised_flatfiles_archive_12_2015.zip","hos_revised_flatfiles_archive_12_2015.zip")
+unzip("hos_revised_flatfiles_archive_12_2015.zip")
+df_2015 <- read.csv("HCAHPS - Hospital.csv",na.strings = c("", "NA"))
+head(df_2015)
+
+
+#Reading 2016 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2016/hos_revised_flatfiles_archive_12_2016.zip","hos_revised_flatfiles_archive_12_2016.zip")
+unzip("hos_revised_flatfiles_archive_12_2016.zip")
+df_2016 <- read.csv("HCAHPS - Hospital.csv",na.strings = c("", "NA"))
+head(df_2016)
+
+
+
+#Reading 2017 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2017/hos_revised_flatfiles_archive_10_2017.zip","hos_revised_flatfiles_archive_10_2017.zip")
+unzip("hos_revised_flatfiles_archive_10_2017.zip")
+df_2017 <- read.csv("HCAHPS - Hospital.csv",na.strings = c("", "NA"))
+head(df_2017)
+
+
+#Reading 2018 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2018/hos_revised_flatfiles_archive_10_2018.zip","hos_revised_flatfiles_archive_10_2018.zip")
+unzip("hos_revised_flatfiles_archive_10_2018.zip")
+df_2018 <- read.csv("HCAHPS - Hospital.csv",na.strings = c("", "NA"))
+head(df_2018)
+
+
+#Reading 2019 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2019/hos_revised_flatfiles_archive_10_2019.zip","hos_revised_flatfiles_archive_10_2019.zip")
+unzip("hos_revised_flatfiles_archive_10_2019.zip")
+df_2019 <- read.csv("HCAHPS - Hospital.csv",na.strings = c("", "NA"))
+head(df_2019)
+
+
+
+#Reading 2020 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2020/hospitals_archive_10_2020.zip","hospitals_archive_10_2020.zip")
+unzip("hospitals_archive_10_2020.zip")
+df_2020 <- read.csv("dgck-syfz.csv",na.strings = c("", "NA"))
+head(df_2020)
+
+
+
+#Reading 2021 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2021/hospitals_10_2021.zip","hospitals_10_2021.zip")
+unzip("hospitals_10_2021.zip")
+df_2021 <- read.csv("HCAHPS-Hospital.csv",na.strings = c("", "NA"))
+head(df_2021)
+
+
+
+#Reading 2022 Data
+download.file("https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/2022/hospitals_10_2022.zip","hospitals_10_22_zip")
+unzip("hospitals_10_22_zip")
+df_2022 <- read.csv("HCAHPS-Hospital.csv",na.strings = c("", "NA"))
+head(df_2022)
+
+
+#From 2019 onwards file, the first column name is Facility ID
+names(df_2019)[1] <- 'Provider.ID'
+names(df_2020)[1] <- 'Provider.ID'
+names(df_2021)[1] <- 'Provider.ID'
+names(df_2022)[1] <- 'Provider.ID'
+
+#From 2019 onwards file, the second column name is Facility Name
+names(df_2019)[2] <- 'Hospital.Name'
+names(df_2020)[2] <- 'Hospital.Name'
+names(df_2021)[2] <- 'Hospital.Name'
+names(df_2022)[2] <- 'Hospital.Name'
+
+# From 2018 onwards, the Provider ID is imported as Character, there might be some junk value
+df_2018$Provider.ID = as.integer(df_2018$Provider.ID)
+df_2019$Provider.ID = as.integer(df_2019$Provider.ID)
+df_2020$Provider.ID = as.integer(df_2020$Provider.ID)
+df_2021$Provider.ID = as.integer(df_2021$Provider.ID)
+df_2022$Provider.ID = as.integer(df_2022$Provider.ID)
+
+
+
+```
+
+# Creating Functions
+
+### Creating Function for Data Filtering
+
+```{r data_filtering_function}
+
+
+
+data_filtering <- function(df) {
+  
+  df %>%
+    filter( Provider.ID == V_Provider_ID_Hospital_to_Analyze | Provider.ID == V_Provider_ID_Comp1 | Provider.ID == V_Provider_ID_Comp2 | Provider.ID == V_Provider_ID_Comp3 | Provider.ID == V_Provider_ID_Comp4, HCAHPS.Measure.ID == V_Attribute1 | HCAHPS.Measure.ID == V_Attribute2 | HCAHPS.Measure.ID == V_Attribute3 | HCAHPS.Measure.ID == V_Attribute4 | HCAHPS.Measure.ID == V_Attribute5) %>%
+    select(Provider.ID,Hospital.Name,HCAHPS.Measure.ID,HCAHPS.Question,HCAHPS.Answer.Percent,Patient.Survey.Star.Rating,HCAHPS.Linear.Mean.Value)
+  
+
+    
+}
+
+```
+
+### Creating Function for Data Manipulation
+
+```{r data_manipulation_function}
+
+data_manipulation <- function(df,field) {
+
+  
+  df %>% 
+    filter( HCAHPS.Measure.ID == field) %>%
+    mutate(UCL = mean(HCAHPS.Answer.Percent,na.rm=T)+ 1.96* sd(HCAHPS.Answer.Percent,na.rm=T),
+           LCL = mean(HCAHPS.Answer.Percent,na.rm=T)- 1.96* sd(HCAHPS.Answer.Percent,na.rm=T)
+           ) %>%
+    filter(Provider.ID == V_Provider_ID_Hospital_to_Analyze)
+  
+}
+
+```
+
+### Creating Function for Data Plotting
+
+```{r data_plotting_function}
+
+
+data_plotting <- function(df){
+
+df %>% ggplot(aes(x=Year)) +
+  geom_line(aes(y=HCAHPS.Answer.Percent,group = Provider.ID),color="blue",size=1.)+
+  geom_point(aes(y=HCAHPS.Answer.Percent),color="blue",size=2)+
+  geom_line(aes(y=UCL,group = Provider.ID),color="red",size=1.2)+
+  geom_line(aes(y=LCL,group = Provider.ID),color="red",size=1.2) +
+  labs(y="Value") + ggtitle(paste(df$HCAHPS.Measure.ID,"\n",df$HCAHPS.Question))
+}
+
+
+```
+
+# Data Filtering
+
+```{r data_filtering}
+
+#Callinf the data_filter function and creating one new column Year
+df_2015_filter <- data_filtering(df_2015) %>% mutate(Year = 2015)
+df_2016_filter <- data_filtering(df_2016) %>% mutate(Year = 2016)
+df_2017_filter <- data_filtering(df_2017) %>% mutate(Year = 2017)
+df_2018_filter <- data_filtering(df_2018) %>% mutate(Year = 2018)
+df_2019_filter <- data_filtering(df_2019) %>% mutate(Year = 2019)
+df_2020_filter <- data_filtering(df_2020) %>% mutate(Year = 2020)
+df_2021_filter <- data_filtering(df_2021) %>% mutate(Year = 2021)
+df_2022_filter <- data_filtering(df_2022) %>% mutate(Year = 2022)
+
+```
+
+# Data Manipulation
+
+```{r data_manipulation}
+
+
+# Combining all the filtered dataframe
+df_concat <- rbind(df_2015_filter,df_2016_filter,df_2017_filter,df_2018_filter,df_2019_filter,df_2020_filter,df_2021_filter,df_2022_filter) %>%
+  filter(Year >= V_Analysis_starting_Year )
+
+#Converting Year to Character
+df_concat$Year <- as.character(df_concat$Year)
+
+# Changing Datatype of 3 fields to numeric, as we have to calculate mean and SD
+df_concat$HCAHPS.Answer.Percent <- as.numeric(df_concat$HCAHPS.Answer.Percent)
+df_concat$Patient.Survey.Star.Rating <- as.numeric(df_concat$Patient.Survey.Star.Rating)
+df_concat$HCAHPS.Linear.Mean.Value <- as.numeric(df_concat$HCAHPS.Linear.Mean.Value)
+
+# Selecting the not null value amongst the 3 fields
+df_concat <- df_concat %>%
+   mutate(HCAHPS.Answer.Percent = coalesce(HCAHPS.Answer.Percent,Patient.Survey.Star.Rating,HCAHPS.Linear.Mean.Value))
+
+
+#Calling the data_manipulation function
+final_data_v1<- data_manipulation(df_concat,V_Attribute1)
+final_data_v2<- data_manipulation(df_concat,V_Attribute2)
+final_data_v3<- data_manipulation(df_concat,V_Attribute3)
+final_data_v4<- data_manipulation(df_concat,V_Attribute4)
+final_data_v5<- data_manipulation(df_concat,V_Attribute5)
+
+
+
+```
+
+# Data Plotting
+
+```{r data_plotting}
+
+#Calling the data_plotting function
+data_plotting(final_data_v1)
+data_plotting(final_data_v2)
+data_plotting(final_data_v3)
+data_plotting(final_data_v4)
+data_plotting(final_data_v5)
+```
