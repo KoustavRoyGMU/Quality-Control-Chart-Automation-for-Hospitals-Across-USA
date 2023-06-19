@@ -9,3 +9,10 @@ When executed with proper parameters, the R code will generate the Quality Contr
 
 # Data Source:
 https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/
+
+# Sample Result:
+
+![image](https://github.com/KoustavRoyGMU/Quality-Control-Chart-Automation-for-Hospitals-Across-USA/assets/113814191/03c65d22-888e-41c7-80d9-03322655d3c4)
+
+
+
