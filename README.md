@@ -7,8 +7,6 @@ Department of Health Administration and Policy, GMU uses Control Chart to compar
 # Solution:
 When executed with proper parameters, the R code will generate the Quality Control Charts. The code will take care of web scraping the data from CMS website to visualize the Graphs.
 
-# Data Source:
-https://data.cms.gov/provider-data/sites/default/files/archive/Hospitals/
 
 # Sample Result:
 
